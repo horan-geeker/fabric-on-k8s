@@ -1,0 +1,2 @@
+CHANNEL_NAME="mychannel"
+peer channel create -o orderer0.fabric-orderer:7050 -c $CHANNEL_NAME -f ./channel-artifacts/channel.tx --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example-com/orderers/orderer0.example-com/msp/tlscacerts/tlsca.example-com-cert.pem

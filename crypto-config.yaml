@@ -1,0 +1,35 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: example-com # since k8s namespace cannot contain dot, use strikethrough instead
+    CA:
+      Hostname: ca
+      Country: China
+      Province: Shaanxi
+      Locality: Xian
+    Template:
+      Count: 1
+
+PeerOrgs:
+  - Name: Org1
+    Domain: org1-example-com
+    CA:
+      Hostname: ca
+      Country: China
+      Province: Shaanxi
+      Locality: Xian
+    Template:
+      Count: 2
+    Users:
+      Count: 1
+  
+  - Name: Org2
+    Domain: org2-example-com
+    CA:
+      Hostname: ca
+      Country: China
+      Province: Shaanxi
+      Locality: Xian
+    Template:
+      Count: 2
+    Users:
+      Count: 1

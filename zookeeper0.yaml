@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: fabric-zk-kafka
+  name: zookeeper0
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+       app: hyperledger
+       role: zookeeper
+       zookeeper-id: zookeeper0
+    spec:
+      containers:
+        - name: zookeeper0
+          image: hyperledger/fabric-zookeeper
+          env:
+            - name: ZOO_MY_ID
+              value: "1"
+            - name: ZOO_SERVERS
+              value: "server.1=0.0.0.0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888"
+---
+apiVersion: v1
+kind: Service
+metadata:
+   namespace: fabric-zk-kafka
+   name: zookeeper0
+spec:
+ selector:
+   app: hyperledger
+   role: zookeeper
+   zookeeper-id: zookeeper0
+ clusterIP: None
+
+ ports:
+   - name: zookeeper-port1
+     protocol: TCP
+     port: 2888
+
+   - name: zookeeper-port2
+     protocol: TCP
+     port: 3888
+
+   - name: zookeeper-port3
+     protocol: TCP
+     port: 2181

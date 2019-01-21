@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: fabric-orderer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: fabric-orderer
+  name: orderer0
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hyperledger
+        role: orderer
+        org: orderer-org
+        orderer-id: orderer0
+    spec:
+      containers:
+      - name: orderer0
+        image: hyperledger/fabric-orderer
+        env:
+        - name: ORDERER_GENERAL_LOGLEVEL
+          value: debug
+        - name: ORDERER_GENERAL_LISTENADDRESS
+          value: 0.0.0.0
+        - name: ORDERER_GENERAL_GENESISMETHOD
+          value: file
+        - name: ORDERER_GENERAL_GENESISFILE
+          value: /var/hyperledger/orderer/orderer.genesis.block
+        - name: ORDERER_GENERAL_LOCALMSPID
+          value: OrdererMSP
+        - name: ORDERER_GENERAL_LOCALMSPDIR
+          value: /var/hyperledger/orderer/msp
+        - name: ORDERER_GENERAL_TLS_ENABLED
+          value: "true"
+        - name: ORDERER_GENERAL_TLS_PRIVATEKEY
+          value: /var/hyperledger/orderer/tls/server.key
+        - name: ORDERER_GENERAL_TLS_CERTIFICATE
+          value: /var/hyperledger/orderer/tls/server.crt
+        - name: ORDERER_GENERAL_TLS_ROOTCAS
+          value: '[/var/hyperledger/orderer/tls/ca.crt]'
+        - name: ORDERER_KAFKA_RETRY_SHORTINTERVAL
+          value: "1s"
+        - name: ORDERER_KAFKA_RETRY_SHORTTOTAL
+          value: "30s"
+        - name: ORDERER_KAFKA_VERBOSE
+          value: "true"
+        workingDir: /opt/gopath/src/github.com/hyperledger/fabric
+        command: ["orderer"]
+        volumeMounts:
+         - mountPath: /var/hyperledger/orderer/msp
+           name: current-dir
+           subPath: crypto-config/ordererOrganizations/example-com/orderers/orderer0.example-com/msp
+         - mountPath: /var/hyperledger/orderer/tls
+           name: current-dir
+           subPath: crypto-config/ordererOrganizations/example-com/orderers/orderer0.example-com/tls
+         - mountPath: /var/hyperledger/orderer/orderer.genesis.block
+           name: current-dir
+           subPath: channel-artifacts/genesis.block
+        ports:
+         - containerPort: 7050
+      volumes:
+       - name: current-dir
+         hostPath:
+            # change this to current dir path
+            path: /Users/hejunwei/k8s/fabric-on-k8s/
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: fabric-orderer
+  name: orderer0
+spec:
+ selector:
+   app: hyperledger
+   role: orderer
+   org: orderer-org
+   orderer-id: orderer0
+ clusterIP: None
+ ports:
+   - name: listen-endpoint
+     protocol: TCP
+     port: 7050
