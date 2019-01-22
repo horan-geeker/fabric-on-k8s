@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-    name: fabric-orderer
+    name: example-com
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: fabric-orderer
+  namespace: example-com
   name: orderer0
 spec:
   replicas: 1
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: orderer0
-        image: hyperledger/fabric-orderer
+        image: hyperledger/fabric-orderer:x86_64-1.0.4
         env:
         - name: ORDERER_GENERAL_LOGLEVEL
           value: debug
@@ -71,7 +71,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: fabric-orderer
+  namespace: example-com
   name: orderer0
 spec:
  selector:

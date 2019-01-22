@@ -11,15 +11,22 @@ spec:
        app: hyperledger
        role: zookeeper
        zookeeper-id: zookeeper1
+       ns: fabric-zk-kafka
     spec:
       containers:
         - name: zookeeper1
-          image: hyperledger/fabric-zookeeper
+          image: hyperledger/fabric-zookeeper:x86_64-1.0.4
           env:
             - name: ZOO_MY_ID
               value: "2"
             - name: ZOO_SERVERS
-              value: "server.1=zookeeper0:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zookeeper2:2888:3888"
+              value: "server.1=zookeeper0.fabric-zk-kafka:2888:3888 server.2=0.0.0.0:2888:3888 server.3=zookeeper2.fabric-zk-kafka:2888:3888"
+            - name: ZOO_TICK_TIME
+              value: "2000"
+            - name: ZOO_INIT_LIMIT
+              value: "10"
+            - name: ZOO_SYNC_LIMIT
+              value: "2"
 ---
 apiVersion: v1
 kind: Service
@@ -31,6 +38,7 @@ spec:
    app: hyperledger
    role: zookeeper
    zookeeper-id: zookeeper1
+   ns: fabric-zk-kafka
  clusterIP: None
 
  ports:
@@ -45,3 +53,34 @@ spec:
    - name: zookeeper-port3
      protocol: TCP
      port: 2181
+---
+apiVersion: v1
+kind: Service
+metadata:
+   namespace: fabric-zk-kafka
+   name: zookeeper1-ex
+spec:
+ selector:
+   app: hyperledger
+   role: zookeeper
+   zookeeper-id: zookeeper1
+   ns: fabric-zk-kafka
+ type: NodePort
+ ports:
+   - name: zookeeper-port1
+     protocol: TCP
+     port: 2888
+     targetPort: 2888
+     nodePort: 32754
+
+   - name: zookeeper-port2
+     protocol: TCP
+     port: 3888
+     targetPort: 3888
+     nodePort: 32755
+
+   - name: zookeeper-port3
+     protocol: TCP
+     port: 2181
+     targetPort: 2181
+     nodePort: 32756

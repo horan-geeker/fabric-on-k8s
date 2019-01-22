@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-    name: fabric-org2
+    name: org2-example-com
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: fabric-org2
+  namespace: org2-example-com
   name: ca
 spec:
   replicas: 1
@@ -15,7 +15,7 @@ spec:
       labels:
        app: hyperledger
        role: ca
-       org: fabric-org2
+       org: org2-example-com
        name: ca
     spec:
       containers:
@@ -29,13 +29,13 @@ spec:
           - name: FABRIC_CA_SERVER_CA_CERTFILE
             value: /etc/hyperledger/fabric-ca-server-config/ca.org2-example-com-cert.pem
           - name: FABRIC_CA_SERVER_CA_KEYFILE
-            value: /etc/hyperledger/fabric-ca-server-config/ead3b8077ce427f4547d4782c1a210242ca01d79515b294bc03132fcf70fe00c_sk
+            value: /etc/hyperledger/fabric-ca-server-config/22034a400ef7ebf308dcdbb37ea67f714ef5ebfef5523e428a7c7888854aa4a9_sk
           - name:  FABRIC_CA_SERVER_TLS_ENABLED
             value: "true"
           ports:
             - containerPort: 7054
           command: ["sh"]
-          args:  ["-c", "fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2-example-com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/ead3b8077ce427f4547d4782c1a210242ca01d79515b294bc03132fcf70fe00c_sk -b admin:adminpw -d"]
+          args:  ["-c", "fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.org2-example-com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/22034a400ef7ebf308dcdbb37ea67f714ef5ebfef5523e428a7c7888854aa4a9_sk -b admin:adminpw -d"]
           volumeMounts:
             - mountPath: /etc/hyperledger/fabric-ca-server-config/
               name: current-dir
@@ -48,13 +48,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   namespace: fabric-org2
+   namespace: org2-example-com
    name: ca
 spec:
  selector:
    app: hyperledger
    role: ca
-   org: fabric-org2
+   org: org2-example-com
    name: ca
  clusterIP: None
  ports:
@@ -65,7 +65,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  namespace: fabric-org2
+  namespace: org2-example-com
   name:	peer0-org2
 spec:
   replicas: 1
@@ -100,15 +100,15 @@ spec:
         - name: CORE_PEER_TLS_ROOTCERT_FILE
           value: "/etc/hyperledger/fabric/tls/ca.crt"
         - name: CORE_PEER_ID
-          value: "peer0.fabric-org2"
+          value: "peer0.org2-example-com"
         - name: CORE_PEER_ADDRESS
-          value: "peer0.fabric-org2:7051"
+          value: "peer0.org2-example-com:7051"
         - name: CORE_PEER_CHAINCODEADDRESS
-          value: "peer0.fabric-org2:7052"
+          value: "peer0.org2-example-com:7052"
         - name: CORE_PEER_CHAINCODELISTENADDRESS
           value: "0.0.0.0:7052"
         - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
-          value: "peer0.fabric-org2:7051"
+          value: "peer0.org2-example-com:7051"
         - name: CORE_PEER_LOCALMSPID
           value: "Org2MSP"
 
@@ -142,7 +142,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   namespace: fabric-org2
+   namespace: org2-example-com
    name: peer0
 spec:
  selector:
@@ -167,7 +167,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-   namespace: fabric-org2
+   namespace: org2-example-com
    name: cli
 spec:
   replicas: 1
