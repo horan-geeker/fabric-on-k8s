@@ -29,7 +29,7 @@ Organizations:
 
     - &Org1
         # DefaultOrg defines the organization which is used in the sampleconfig
-        # of the zigledger.git development environment
+        # of the fabric.git development environment
         Name: Org1MSP
 
         # ID to load the MSP definition as

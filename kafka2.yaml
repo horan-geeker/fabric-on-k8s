@@ -11,11 +11,10 @@ spec:
        app: hyperledger
        role: kafka
        kafka-id: kafka2
-       ns: fabric-zk-kafka
     spec:
       containers:
         - name: kafka2
-          image: hyperledger/fabric-kafka:x86_64-1.0.4
+          image: hyperledger/fabric-kafka:latest
           env:
             - name: KAFKA_BROKER_ID
               value: "2"
@@ -24,7 +23,7 @@ spec:
             - name: KAFKA_DEFAULT_REPLICATION_FACTOR
               value: "3"
             - name: KAFKA_ZOOKEEPER_CONNECT
-              value: "zookeeper0.fabric-zk-kafka:2181,zookeeper1.fabric-zk-kafka:2181,zookeeper2.fabric-zk-kafka:2181"
+              value: "zookeeper0:2181,zookeeper1:2181,zookeeper2:2181"
             - name: KAFKA_MESSAGE_MAX_BYTES
               value: "103809024"
             - name: KAFKA_REPLICA_FETCH_MAX_BYTES
@@ -44,7 +43,6 @@ spec:
    app: hyperledger
    role: kafka
    kafka-id: kafka2
-   ns: fabric-zk-kafka
  clusterIP: None
  ports:
    - name: kafka-port1
@@ -54,28 +52,3 @@ spec:
    - name: kafka-port2
      protocol: TCP
      port: 9093
----
-apiVersion: v1
-kind: Service
-metadata:
-   namespace: fabric-zk-kafka
-   name: kafka2-ex
-spec:
- selector:
-   app: hyperledger
-   role: kafka
-   kafka-id: kafka2
-   ns: fabric-zk-kafka
- type: NodePort
- ports:
-   - name: kafka-port1
-     protocol: TCP
-     port: 9092
-     targetPort: 9092
-     nodePort: 32735
-
-   - name: kafka-port2
-     protocol: TCP
-     port: 9093
-     targetPort: 9093
-     nodePort: 32736

@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: ca
-          image: hyperledger/fabric-ca
+          image: hyperledger/fabric-ca:latest
           env:
           - name:  FABRIC_CA_HOME
             value: /etc/hyperledger/fabric-ca-server
@@ -79,11 +79,11 @@ spec:
     spec:
       containers:
       - name: peer0-org1
-        image: hyperledger/fabric-peer
+        image: hyperledger/fabric-peer:latest
         env:
         - name: CORE_VM_ENDPOINT
           value: "unix:///host/var/run/docker.sock"
-        - name: CORE_LOGGING_LEVEL
+        - name: FABRIC_LOGGING_SPEC
           value: "DEBUG"
         - name: CORE_PEER_TLS_ENABLED
           value: "true"
@@ -99,26 +99,24 @@ spec:
           value: "/etc/hyperledger/fabric/tls/server.key"
         - name: CORE_PEER_TLS_ROOTCERT_FILE
           value: "/etc/hyperledger/fabric/tls/ca.crt"
+        - name: CORE_PEER_TLS_SERVERHOSTOVERRIDE
+          value: peer0.org1-shuolitech-cn
         - name: CORE_PEER_ID
           value: "peer0.org1-example-com"
         - name: CORE_PEER_ADDRESS
           value: "peer0.org1-example-com:7051"
-        - name: CORE_PEER_CHAINCODEADDRESS
-          value: "peer0.org1-example-com:7052"
-        - name: CORE_PEER_CHAINCODELISTENADDRESS
-          value: "0.0.0.0:7052"
         - name: CORE_PEER_GOSSIP_EXTERNALENDPOINT
           value: "peer0.org1-example-com:7051"
         - name: CORE_PEER_LOCALMSPID
           value: "Org1MSP"
+        - name: CORE_PEER_ADDRESSAUTODETECT
+          value: "true"
 
         workingDir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-        
         ports:
          - containerPort: 7051
          - containerPort: 7052
          - containerPort: 7053
-
         command: ["peer"]
         args: ["node","start"]
         volumeMounts:
@@ -178,13 +176,13 @@ spec:
     spec:
       containers:
         - name: cli
-          image:  hyperledger/fabric-tools
+          image: hyperledger/fabric-tools:latest
           env:
           - name: CORE_VM_ENDPOINT
             value: "unix:///host/var/run/docker.sock"
           - name: GOPATH
             value: "/opt/gopath"
-          - name: CORE_LOGGING_LEVEL
+          - name: FABRIC_LOGGING_SPEC
             value: "DEBUG"
           - name: CORE_PEER_ID
             value: "cli"

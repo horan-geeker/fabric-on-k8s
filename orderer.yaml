@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: orderer0
-        image: hyperledger/fabric-orderer:x86_64-1.0.4
+        image: hyperledger/fabric-orderer:latest
         env:
         - name: ORDERER_GENERAL_LOGLEVEL
           value: debug
