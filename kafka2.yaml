@@ -12,6 +12,10 @@ spec:
        role: kafka
        kafka-id: kafka2
     spec:
+      initContainers:
+        - name: depend-on-zookeeper-cluster
+          image: busybox:latest
+          command: ['sh', '-c', "telnet zookeeper-0.zk-headless 2181 && telnet zookeeper-1.zk-headless 2181 && telnet zookeeper-2.zk-headless 2181"]
       containers:
         - name: kafka2
           image: hyperledger/fabric-kafka:latest
@@ -23,7 +27,7 @@ spec:
             - name: KAFKA_DEFAULT_REPLICATION_FACTOR
               value: "3"
             - name: KAFKA_ZOOKEEPER_CONNECT
-              value: "zookeeper0:2181,zookeeper1:2181,zookeeper2:2181"
+              value: "zookeeper-0.zk-headless:2181,zookeeper-1.zk-headless:2181,zookeeper-2.zk-headless:2181"
             - name: KAFKA_MESSAGE_MAX_BYTES
               value: "103809024"
             - name: KAFKA_REPLICA_FETCH_MAX_BYTES

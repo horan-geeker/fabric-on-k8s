@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: fabric-zk-kafka
+  name: zookeeper
+spec:
+  serviceName: zk-headless
+  selector:
+    matchLabels:
+      app: hyperledger
+      role: zookeeper
+      ns: fabric-zk-kafka
+  replicas: 3
+  template:
+    metadata:
+      labels:
+       app: hyperledger
+       role: zookeeper
+       ns: fabric-zk-kafka
+    spec:
+      containers:
+        - name: zookeeper
+          image: hyperledger/fabric-zookeeper:latest
+          env:
+            - name: ZOO_SERVERS
+              value: "server.1=zookeeper-0.zk-headless:2888:3888 server.2=zookeeper-1.zk-headless:2888:3888 server.3=zookeeper-2.zk-headless:2888:3888"
+            - name: ZOO_TICK_TIME
+              value: "2000"
+            - name: ZOO_INIT_LIMIT
+              value: "10"
+            - name: ZOO_SYNC_LIMIT
+              value: "2"
+          lifecycle:
+            postStart:
+              exec:
+                command: 
+                  - "/bin/bash"
+                  - "-c"
+                  - |
+                    sed -i "s/${HOSTNAME}\.[^:]*:/0.0.0.0:/g" /conf/zoo.cfg
+                    echo $((${HOSTNAME##*-}+1)) > /data/myid
+---
+apiVersion: v1
+kind: Service
+metadata:
+   namespace: fabric-zk-kafka
+   name: zk-headless
+spec:
+ selector:
+   app: hyperledger
+   role: zookeeper
+   ns: fabric-zk-kafka
+ clusterIP: None
+
+ ports:
+   - name: server
+     protocol: TCP
+     port: 2888
+
+   - name: leader-election
+     protocol: TCP
+     port: 3888
+
+   - name: client
+     protocol: TCP
+     port: 2181
